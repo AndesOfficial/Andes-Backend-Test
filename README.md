@@ -1,3 +1,6 @@
+# Postman Collection Link
+https://www.postman.com/altimetry-administrator-64942417/andes-backend/collection/negcjby/andes-backend?action=share&creator=33444157
+
 # Andes Backend Developer Internship Challenge
 
 ## Challenge Overview-to be Completed by 23rd September, 11:30 AM
