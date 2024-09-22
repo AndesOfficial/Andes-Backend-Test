@@ -9,6 +9,8 @@ const mongoose = require("mongoose");
 require("dotenv").config();
 
 const app = express();
+const PORT = process.env.PORT || 3000;
+const MONGODB_URI = process.env.MONGODB_URI;
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -23,9 +25,9 @@ app.use(errorHandler);
 
 const start = async () => {
 	try {
-		await connectDB(process.env.MONGODB_URI);
-		app.listen(process.env.PORT, () => {
-			console.log(`Server is running on port ${env.PORT}`);
+		await connectDB(MONGODB_URI);
+		app.listen(PORT, () => {
+			console.log(`Server is running on port ${PORT}`);
 		});
 	} catch (err) {
 		console.error(err);
