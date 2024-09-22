@@ -1,6 +1,8 @@
 const createHttpError = require("http-errors");
 const User = require("../models/User");
 const sanitizeUsers = require("../utils/sanitizeUsers");
+const validateEmail = require("../utils/validateEmail");
+const validatePassword = require("../utils/validatePassword");
 
 class UserController {
 	async createUser(req, res, next) {
@@ -12,13 +14,30 @@ class UserController {
 				);
 			}
 
+			if (validateEmail(email) === null) {
+				return next(createHttpError.BadRequest("Invalid email format"));
+			}
+
 			const emailExists = await User.findOne({ email });
 
 			if (emailExists) {
 				return next(createHttpError.Conflict("Email already exists"));
 			}
 
-			const user = await User.create({ name, email, password });
+			const passwordErrors = validatePassword(password);
+			if (passwordErrors.length > 0) {
+				return next(
+					createHttpError.BadRequest("Invalid password format", {
+						errors: passwordErrors,
+					})
+				);
+			}
+
+			const user = await User.create({
+				name,
+				email,
+				password,
+			});
 
 			res.status(201).json({
 				user: {
@@ -105,6 +124,11 @@ class UserController {
 			}
 
 			if (email) {
+				if (validateEmail(email) === null) {
+					return next(
+						createHttpError.BadRequest("Invalid email format")
+					);
+				}
 				const emailExists = await User.findOne({ email });
 				if (emailExists) {
 					return next(
@@ -114,6 +138,14 @@ class UserController {
 			}
 
 			if (password) {
+				const passwordErrors = validatePassword(password);
+				if (passwordErrors.length > 0) {
+					return next(
+						createHttpError.BadRequest("Invalid password format", {
+							errors: passwordErrors,
+						})
+					);
+				}
 				user.password = password;
 			}
 
