@@ -26,12 +26,22 @@ class TaskController {
 				}
 			}
 
+			let date = null;
+			if (dueDate) {
+				date = new Date(dueDate);
+				if (date.toString() === "Invalid Date") {
+					return next(
+						createHttpError.BadRequest("Invalid date format")
+					);
+				}
+			}
+
 			const task = await Task.create({
 				title,
 				description,
 				completed: completed ? completed : false,
 				assignedTo: user ? user.id : null,
-				dueDate: dueDate ? dueDate : null,
+				dueDate: date,
 			});
 
 			return res.status(201).json(task);
@@ -124,7 +134,17 @@ class TaskController {
 			}
 
 			if (dueDate) {
-				task.dueDate = dueDate;
+				let date = null;
+				if (dueDate) {
+					date = new Date(dueDate);
+					if (date.toString() === "Invalid Date") {
+						return next(
+							createHttpError.BadRequest("Invalid date format")
+						);
+					}
+				}
+
+				task.dueDate = date;
 			}
 
 			await task.save();
